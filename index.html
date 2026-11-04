@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ahorcadito científico - Biología 6°</title>
+
+<style>
+
+:root{
+  --navy:#102a43;
+  --blue:#176b87;
+  --teal:#0f8b8d;
+  --green:#2a9d5b;
+  --lime:#a8d936;
+  --orange:#f39c3d;
+  --red:#d9534f;
+  --light:#f4f8fb;
+  --white:#ffffff;
+  --gray:#637381;
+  --border:#d6e2ea;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#eef4f7;
+  color:#172b3a;
+}
+
+header{
+  background:linear-gradient(120deg,var(--navy),var(--blue));
+  color:white;
+  padding:16px 24px;
+}
+
+header h1{
+  margin:0;
+  font-size:30px;
+}
+
+header p{
+  margin:5px 0 0;
+  opacity:.9;
+}
+
+button{
+  font-family:inherit;
+  cursor:pointer;
+}
+
+.hidden{
+  display:none !important;
+}
+
+/* ---------- CONFIGURACIÓN ---------- */
+
+#setupScreen{
+  max-width:1200px;
+  margin:22px auto;
+  padding:0 18px 40px;
+}
+
+.panel{
+  background:white;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+  margin-bottom:18px;
+}
+
+.panel h2{
+  margin-top:0;
+  color:var(--navy);
+}
+
+.notice{
+  border-left:6px solid var(--orange);
+  background:#fff7eb;
+  padding:14px;
+  border-radius:8px;
+  line-height:1.45;
+}
+
+.setup-grid{
+  display:grid;
+  grid-template-columns:110px 1fr 1fr;
+  gap:8px;
+  align-items:center;
+  margin-top:15px;
+}
+
+.setup-head{
+  font-weight:bold;
+  color:white;
+  background:var(--blue);
+  padding:10px;
+  border-radius:6px;
+}
+
+.team-label{
+  font-weight:bold;
+  color:var(--navy);
+}
+
+input[type="text"]{
+  width:100%;
+  padding:10px;
+  border:1px solid #b9cbd6;
+  border-radius:7px;
+  font-size:15px;
+}
+
+.setup-options{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:18px;
+}
+
+.primary{
+  background:var(--green);
+  border:none;
+  color:white;
+  padding:12px 18px;
+  border-radius:8px;
+  font-weight:bold;
+  font-size:15px;
+}
+
+.secondary{
+  background:var(--blue);
+  border:none;
+  color:white;
+  padding:12px 18px;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.danger{
+  background:#8d3940;
+  border:none;
+  color:white;
+  padding:12px 18px;
+  border-radius:8px;
+}
+
+.outline{
+  background:white;
+  border:2px solid var(--blue);
+  color:var(--blue);
+  padding:10px 16px;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+/* ---------- JUEGO ---------- */
+
+#gameScreen{
+  padding-bottom:30px;
+}
+
+.game-toolbar{
+  background:white;
+  padding:8px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  border-bottom:1px solid var(--border);
+}
+
+.game-toolbar strong{
+  color:var(--navy);
+}
+
+.small-btn{
+  border:none;
+  background:#e8f2f5;
+  color:var(--navy);
+  padding:8px 11px;
+  border-radius:7px;
+  font-weight:bold;
+}
+
+#activeInfo{
+  background:#dff5e8;
+  border-bottom:1px solid #b9e6cb;
+  text-align:center;
+  padding:8px;
+  font-weight:bold;
+  font-size:18px;
+}
+
+/* ---------- TECLADO ---------- */
+
+.keyboard{
+  background:white;
+  padding:10px 15px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  justify-content:center;
+  border-bottom:1px solid var(--border);
+}
+
+.key{
+  width:37px;
+  height:37px;
+  border:0;
+  border-radius:7px;
+  background:var(--navy);
+  color:white;
+  font-weight:bold;
+  font-size:17px;
+  transition:.15s;
+}
+
+.key:hover{
+  background:var(--teal);
+  transform:translateY(-1px);
+}
+
+.key:disabled{
+  background:#bdc9d0;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* ---------- MARCADOR ---------- */
+
+.scoreboard{
+  display:flex;
+  gap:7px;
+  padding:8px 12px;
+  overflow-x:auto;
+  background:#dde9ef;
+}
+
+.score-item{
+  min-width:110px;
+  background:white;
+  border-radius:7px;
+  padding:6px 9px;
+  font-size:12px;
+  white-space:nowrap;
+  border-left:4px solid var(--teal);
+}
+
+.score-item.finished{
+  border-left-color:var(--green);
+}
+
+/* ---------- TARJETAS ---------- */
+
+#teamsBoard{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+  padding:12px;
+}
+
+.team-card{
+  background:white;
+  border:3px solid transparent;
+  border-radius:12px;
+  padding:10px;
+  min-height:205px;
+  box-shadow:0 2px 7px rgba(0,0,0,.08);
+  transition:.15s;
+}
+
+.team-card:hover{
+  border-color:#91bac8;
+}
+
+.team-card.active{
+  border-color:var(--orange);
+  box-shadow:0 0 0 3px rgba(243,156,61,.18);
+}
+
+.team-card.finished{
+  background:#eaf8ef;
+  border-color:var(--green);
+}
+
+.team-card.awaiting{
+  background:#fff6de;
+  border-color:#e6af3c;
+}
+
+.team-title{
+  font-size:16px;
+  font-weight:bold;
+  color:var(--navy);
+  display:flex;
+  justify-content:space-between;
+  gap:5px;
+}
+
+.place{
+  color:var(--green);
+}
+
+.phrase{
+  margin:16px 0 10px;
+  font-family:"Courier New",monospace;
+  font-size:22px;
+  font-weight:bold;
+  letter-spacing:2px;
+  line-height:1.45;
+  color:#132f40;
+  min-height:60px;
+  word-break:break-word;
+}
+
+.mistakes{
+  font-size:13px;
+  color:#7c4343;
+  margin-bottom:5px;
+}
+
+.used{
+  font-size:12px;
+  color:var(--gray);
+  min-height:27px;
+}
+
+.clue{
+  margin-top:7px;
+  padding:6px;
+  background:#e8f5f3;
+  border-radius:5px;
+  font-size:12px;
+}
+
+.card-actions{
+  display:flex;
+  gap:5px;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+
+.card-actions button{
+  border:0;
+  border-radius:5px;
+  padding:6px 8px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.hint-btn{
+  background:#d9eef5;
+  color:#164b5c;
+}
+
+.solve-btn{
+  background:#e7e2f8;
+  color:#483d77;
+}
+
+.validate-btn{
+  background:var(--green);
+  color:white;
+}
+
+.final-challenge{
+  background:#fff0bf;
+  border:1px solid #e5b948;
+  padding:8px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:bold;
+  margin-top:7px;
+}
+
+/* ---------- RESULTADOS ---------- */
+
+#finalBox{
+  max-width:850px;
+  margin:20px auto;
+  padding:22px;
+  background:white;
+  border-radius:14px;
+  text-align:center;
+  box-shadow:0 3px 15px rgba(0,0,0,.1);
+}
+
+#finalBox h2{
+  color:var(--green);
+}
+
+.final-table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.final-table th,
+.final-table td{
+  border:1px solid var(--border);
+  padding:9px;
+}
+
+.final-table th{
+  background:var(--navy);
+  color:white;
+}
+
+footer{
+  text-align:center;
+  color:#627d8a;
+  padding:15px;
+  font-size:12px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media(max-width:1100px){
+  #teamsBoard{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+@media(max-width:720px){
+  #teamsBoard{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .setup-grid{
+    grid-template-columns:1fr;
+  }
+
+  .setup-head{
+    display:none;
+  }
+
+  header h1{
+    font-size:24px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🧬 Ahorcadito científico · Biología 6°</h1>
+  <p>Estrategias de defensa y supervivencia de los seres vivos</p>
+</header>
+
+
+<!-- =======================================================
+     PANTALLA DE CONFIGURACIÓN
+======================================================= -->
+
+<section id="setupScreen">
+
+  <div class="panel">
+
+    <h2>Preparación de la partida</h2>
+
+    <div class="notice">
+      <strong>Modo docente.</strong>
+      Escribe una frase diferente para cada equipo y una pista breve.
+      Las frases que ingreses aquí no forman parte del código público.
+      Puedes guardarlas únicamente en este navegador.
+    </div>
+
+    <div class="setup-grid" id="setupGrid">
+
+      <div class="setup-head">Equipo</div>
+      <div class="setup-head">Palabra o frase secreta</div>
+      <div class="setup-head">Pista científica</div>
+
+    </div>
+
+    <div style="margin-top:16px">
+      <label>
+        <input id="shuffleCheck" type="checkbox" checked>
+        Asignar las frases aleatoriamente a los equipos al comenzar
+      </label>
+    </div>
+
+    <div style="margin-top:8px">
+      <label>
+        <input id="autoAdvanceCheck" type="checkbox" checked>
+        Pasar automáticamente al siguiente equipo después de cada letra
+      </label>
+    </div>
+
+    <div class="setup-options">
+      <button class="primary" onclick="startGame()">▶ Iniciar juego</button>
+
+      <button class="secondary" onclick="saveConfiguration()">
+        💾 Guardar configuración en este computador
+      </button>
+
+      <button class="outline" onclick="loadConfiguration()">
+        📂 Recuperar configuración
+      </button>
+
+      <button class="danger" onclick="clearConfiguration()">
+        🗑 Borrar configuración guardada
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =======================================================
+     PANTALLA DEL JUEGO
+======================================================= -->
+
+<section id="gameScreen" class="hidden">
+
+  <div class="game-toolbar">
+
+    <div>
+      <strong>Ahorcadito científico</strong>
+      · Selecciona el equipo y luego una letra.
+    </div>
+
+    <div>
+      <button class="small-btn" onclick="toggleFullscreen()">
+        ⛶ Pantalla completa
+      </button>
+
+      <button class="small-btn" onclick="restartGame()">
+        ↻ Reiniciar
+      </button>
+
+      <button class="small-btn" onclick="returnToSetup()">
+        ⚙ Configuración
+      </button>
+    </div>
+
+  </div>
+
+
+  <div id="activeInfo">
+    Turno: Equipo 1
+  </div>
+
+
+  <div class="keyboard" id="keyboard"></div>
+
+
+  <div class="scoreboard" id="scoreboard"></div>
+
+
+  <main id="teamsBoard"></main>
+
+
+  <div id="finalBox" class="hidden"></div>
+
+</section>
+
+
+<footer>
+  Recurso educativo · Biología 6° · La explicación científica es requisito para validar la respuesta.
+</footer>
+
+
+<script>
+
+/* =======================================================
+   VARIABLES GENERALES
+======================================================= */
+
+const TOTAL_TEAMS = 10;
+
+const ALPHABET = [
+  "A","B","C","D","E","F","G","H","I",
+  "J","K","L","M","N","Ñ","O","P","Q",
+  "R","S","T","U","V","W","X","Y","Z"
+];
+
+let teams = [];
+let activeTeam = 0;
+let finishCounter = 0;
+
+
+/* =======================================================
+   NORMALIZACIÓN DEL ESPAÑOL
+======================================================= */
+
+/*
+  Permite que:
+  A encuentre Á
+  E encuentre É
+  I encuentre Í
+  O encuentre Ó
+  U encuentre Ú
+
+  pero mantiene la Ñ separada de la N.
+*/
+
+function normalizeText(text){
+
+  return text
+    .toUpperCase()
+    .replace(/Ñ/g,"§")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/§/g,"Ñ");
+
+}
+
+
+/* =======================================================
+   CREAR FORMULARIO DE LOS 10 EQUIPOS
+======================================================= */
+
+function createSetupRows(){
+
+  const grid = document.getElementById("setupGrid");
+
+  for(let i=0;i<TOTAL_TEAMS;i++){
+
+    const team = document.createElement("div");
+    team.className = "team-label";
+    team.textContent = "Equipo " + (i+1);
+
+    const phrase = document.createElement("input");
+    phrase.type = "text";
+    phrase.id = "phrase_" + i;
+    phrase.placeholder = "Ej.: CAMUFLAJE CRÍPTICO";
+
+    const clue = document.createElement("input");
+    clue.type = "text";
+    clue.id = "clue_" + i;
+    clue.placeholder = "Pista breve, sin revelar la respuesta";
+
+    grid.appendChild(team);
+    grid.appendChild(phrase);
+    grid.appendChild(clue);
+
+  }
+
+}
+
+
+/* =======================================================
+   GUARDAR CONFIGURACIÓN SOLO EN ESTE NAVEGADOR
+======================================================= */
+
+function saveConfiguration(){
+
+  const data = [];
+
+  for(let i=0;i<TOTAL_TEAMS;i++){
+
+    data.push({
+      phrase:document.getElementById("phrase_"+i).value.trim(),
+      clue:document.getElementById("clue_"+i).value.trim()
+    });
+
+  }
+
+  localStorage.setItem(
+    "ahorcadito_biologia6",
+    JSON.stringify(data)
+  );
+
+  alert("Configuración guardada únicamente en este navegador.");
+
+}
+
+
+/* =======================================================
+   RECUPERAR CONFIGURACIÓN
+======================================================= */
+
+function loadConfiguration(){
+
+  const saved =
+    localStorage.getItem("ahorcadito_biologia6");
+
+  if(!saved){
+    alert("No hay una configuración guardada en este navegador.");
+    return;
+  }
+
+  const data = JSON.parse(saved);
+
+  data.forEach((item,i)=>{
+
+    if(i<TOTAL_TEAMS){
+
+      document.getElementById("phrase_"+i).value =
+        item.phrase || "";
+
+      document.getElementById("clue_"+i).value =
+        item.clue || "";
+
+    }
+
+  });
+
+}
+
+
+/* =======================================================
+   BORRAR CONFIGURACIÓN
+======================================================= */
+
+function clearConfiguration(){
+
+  const ok = confirm(
+    "¿Quieres borrar las frases guardadas en este navegador?"
+  );
+
+  if(!ok) return;
+
+  localStorage.removeItem("ahorcadito_biologia6");
+
+  for(let i=0;i<TOTAL_TEAMS;i++){
+    document.getElementById("phrase_"+i).value="";
+    document.getElementById("clue_"+i).value="";
+  }
+
+}
+
+
+/* =======================================================
+   MEZCLAR LISTA
+======================================================= */
+
+function shuffle(array){
+
+  const copy = [...array];
+
+  for(let i=copy.length-1;i>0;i--){
+
+    const j = Math.floor(Math.random()*(i+1));
+
+    [copy[i],copy[j]] = [copy[j],copy[i]];
+
+  }
+
+  return copy;
+
+}
+
+
+/* =======================================================
+   INICIAR PARTIDA
+======================================================= */
+
+function startGame(){
+
+  let items = [];
+
+  for(let i=0;i<TOTAL_TEAMS;i++){
+
+    const phrase =
+      document.getElementById("phrase_"+i).value.trim();
+
+    const clue =
+      document.getElementById("clue_"+i).value.trim();
+
+    if(!phrase){
+
+      alert(
+        "Falta ingresar la frase correspondiente a la fila "
+        +(i+1)+"."
+      );
+
+      return;
+
+    }
+
+    items.push({
+      phrase,
+      clue
+    });
+
+  }
+
+
+  /* Comprobar que todas sean diferentes */
+
+  const unique = new Set(
+    items.map(x=>normalizeText(x.phrase))
+  );
+
+  if(unique.size !== TOTAL_TEAMS){
+
+    alert(
+      "Las diez palabras o frases deben ser diferentes."
+    );
+
+    return;
+
+  }
+
+
+  if(document.getElementById("shuffleCheck").checked){
+    items = shuffle(items);
+  }
+
+
+  teams = items.map((item,index)=>({
+
+    name:"Equipo "+(index+1),
+
+    phrase:item.phrase,
+
+    clue:item.clue,
+
+    used:new Set(),
+
+    errors:0,
+
+    hintVisible:false,
+
+    awaitingValidation:false,
+
+    finished:false,
+
+    place:null,
+
+    points:0
+
+  }));
+
+
+  finishCounter = 0;
+  activeTeam = 0;
+
+
+  document
+    .getElementById("setupScreen")
+    .classList.add("hidden");
+
+  document
+    .getElementById("gameScreen")
+    .classList.remove("hidden");
+
+
+  createKeyboard();
+  renderAll();
+
+}
+
+
+/* =======================================================
+   CREAR TECLADO
+======================================================= */
+
+function createKeyboard(){
+
+  const keyboard =
+    document.getElementById("keyboard");
+
+  keyboard.innerHTML="";
+
+  ALPHABET.forEach(letter=>{
+
+    const button =
+      document.createElement("button");
+
+    button.className="key";
+
+    button.textContent=letter;
+
+    button.onclick=()=>guessLetter(letter);
+
+    keyboard.appendChild(button);
+
+  });
+
+}
+
+
+/* =======================================================
+   MOSTRAR FRASE
+======================================================= */
+
+function displayPhrase(team){
+
+  let output="";
+
+  const original = team.phrase.toUpperCase();
+
+  for(let i=0;i<original.length;i++){
+
+    const originalChar = original[i];
+
+    const normalizedChar =
+      normalizeText(originalChar);
+
+    if(/[A-ZÑ]/.test(normalizedChar)){
+
+      if(team.used.has(normalizedChar)){
+        output += originalChar + " ";
+      }else{
+        output += "_ ";
+      }
+
+    }else if(originalChar===" "){
+
+      output += "   ";
+
+    }else{
+
+      output += originalChar + " ";
+
+    }
+
+  }
+
+  return output.trim();
+
+}
+
+
+/* =======================================================
+   COMPROBAR SI FRASE ESTÁ COMPLETA
+======================================================= */
+
+function isComplete(team){
+
+  const normalized =
+    normalizeText(team.phrase);
+
+  for(const char of normalized){
+
+    if(/[A-ZÑ]/.test(char) &&
+       !team.used.has(char)){
+
+      return false;
+
+    }
+
+  }
+
+  return true;
+
+}
+
+
+/* =======================================================
+   JUGAR UNA LETRA
+======================================================= */
+
+function guessLetter(letter){
+
+  const team = teams[activeTeam];
+
+  if(team.finished ||
+     team.awaitingValidation){
+
+    return;
+
+  }
+
+  if(team.used.has(letter)){
+
+    return;
+
+  }
+
+  team.used.add(letter);
+
+  const normalizedPhrase =
+    normalizeText(team.phrase);
+
+
+  if(!normalizedPhrase.includes(letter)){
+    team.errors++;
+  }
+
+
+  if(isComplete(team)){
+
+    team.awaitingValidation=true;
+
+  }
+
+
+  renderAll();
+
+
+  if(
+    document
+      .getElementById("autoAdvanceCheck")
+      .checked
+  ){
+
+    moveToNextTeam();
+
+  }
+
+}
+
+
+/* =======================================================
+   PASAR AL SIGUIENTE EQUIPO
+======================================================= */
+
+function moveToNextTeam(){
+
+  for(let step=1;step<=TOTAL_TEAMS;step++){
+
+    const next =
+      (activeTeam+step)%TOTAL_TEAMS;
+
+    if(
+      !teams[next].finished &&
+      !teams[next].awaitingValidation
+    ){
+
+      activeTeam=next;
+      renderAll();
+      return;
+
+    }
+
+  }
+
+}
+
+
+/* =======================================================
+   SELECCIONAR EQUIPO
+======================================================= */
+
+function selectTeam(index){
+
+  activeTeam=index;
+  renderAll();
+
+}
+
+
+/* =======================================================
+   MOSTRAR PISTA
+======================================================= */
+
+function toggleHint(index,event){
+
+  event.stopPropagation();
+
+  teams[index].hintVisible =
+    !teams[index].hintVisible;
+
+  renderAll();
+
+}
+
+
+/* =======================================================
+   INTENTAR RESOLVER TODA LA FRASE
+======================================================= */
+
+function solvePhrase(index,event){
+
+  event.stopPropagation();
+
+  const team=teams[index];
+
+  if(team.finished ||
+     team.awaitingValidation) return;
+
+
+  const answer =
+    prompt(
+      "Escribe la frase completa propuesta por "
+      +team.name+":"
+    );
+
+
+  if(answer===null) return;
+
+
+  if(
+    normalizeText(answer.trim()) ===
+    normalizeText(team.phrase.trim())
+  ){
+
+    const normalized =
+      normalizeText(team.phrase);
+
+    for(const char of normalized){
+
+      if(/[A-ZÑ]/.test(char)){
+        team.used.add(char);
+      }
+
+    }
+
+    team.awaitingValidation=true;
+
+  }else{
+
+    team.errors += 2;
+
+    alert(
+      "La frase no coincide. Se registran 2 errores."
+    );
+
+  }
+
+
+  renderAll();
+
+}
+
+
+/* =======================================================
+   VALIDACIÓN CONCEPTUAL DEL DOCENTE
+======================================================= */
+
+function validateTeam(index,event){
+
+  event.stopPropagation();
+
+  const team=teams[index];
+
+  if(
+    !team.awaitingValidation ||
+    team.finished
+  ) return;
+
+
+  finishCounter++;
+
+  team.awaitingValidation=false;
+  team.finished=true;
+  team.place=finishCounter;
+  team.points=11-finishCounter;
+
+
+  renderAll();
+
+
+  if(finishCounter===TOTAL_TEAMS){
+    showFinalResults();
+  }
+
+}
+
+
+/* =======================================================
+   INDICADOR DE ERRORES
+======================================================= */
+
+function errorIndicator(errors){
+
+  const visible =
+    Math.min(errors,6);
+
+  let text="";
+
+  for(let i=0;i<6;i++){
+
+    text += i<visible ? "● " : "○ ";
+
+  }
+
+  if(errors>6){
+    text += "+"+(errors-6);
+  }
+
+  return text;
+
+}
+
+
+/* =======================================================
+   RENDERIZAR TARJETAS
+======================================================= */
+
+function renderTeams(){
+
+  const board =
+    document.getElementById("teamsBoard");
+
+  board.innerHTML="";
+
+
+  teams.forEach((team,index)=>{
+
+    const card =
+      document.createElement("section");
+
+    card.className="team-card";
+
+    if(index===activeTeam){
+      card.classList.add("active");
+    }
+
+    if(team.finished){
+      card.classList.add("finished");
+    }
+
+    if(team.awaitingValidation){
+      card.classList.add("awaiting");
+    }
+
+
+    card.onclick=()=>selectTeam(index);
+
+
+    let placeHTML="";
+
+    if(team.finished){
+
+      placeHTML=
+        `<span class="place">
+        ${team.place}.º · ${team.points} pts
+        </span>`;
+
+    }
+
+
+    const usedLetters =
+      [...team.used].join(" · ");
+
+
+    const clueHTML =
+      team.hintVisible
+      ?
+      `<div class="clue">
+      <strong>Pista:</strong>
+      ${escapeHTML(team.clue || "Sin pista")}
+      </div>`
+      :
+      "";
+
+
+    const challengeHTML =
+      team.awaitingValidation
+      ?
+      `<div class="final-challenge">
+      🧠 RETO FINAL:
+      Clasifiquen esta estrategia principalmente
+      como morfológica, fisiológica o conductual
+      y expliquen cómo favorece la supervivencia.
+      </div>`
+      :
+      "";
+
+
+    const validateHTML =
+      team.awaitingValidation
+      ?
+      `<button class="validate-btn"
+      onclick="validateTeam(${index},event)">
+      ✓ Validar comprensión
+      </button>`
+      :
+      "";
+
+
+    card.innerHTML=`
+
+      <div class="team-title">
+        <span>${team.name}</span>
+        ${placeHTML}
+      </div>
+
+      <div class="phrase">
+        ${displayPhrase(team)}
+      </div>
+
+      <div class="mistakes">
+        Fallos: ${errorIndicator(team.errors)}
+      </div>
+
+      <div class="used">
+        <strong>Letras:</strong>
+        ${usedLetters || "—"}
+      </div>
+
+      ${clueHTML}
+
+      ${challengeHTML}
+
+      <div class="card-actions">
+
+        <button class="hint-btn"
+          onclick="toggleHint(${index},event)">
+          💡 Pista
+        </button>
+
+        ${
+          !team.finished &&
+          !team.awaitingValidation
+          ?
+          `<button class="solve-btn"
+          onclick="solvePhrase(${index},event)">
+          ✍ Resolver
+          </button>`
+          :
+          ""
+        }
+
+        ${validateHTML}
+
+      </div>
+
+    `;
+
+
+    board.appendChild(card);
+
+  });
+
+}
+
+
+/* =======================================================
+   MARCADOR
+======================================================= */
+
+function renderScoreboard(){
+
+  const box =
+    document.getElementById("scoreboard");
+
+  box.innerHTML="";
+
+
+  teams.forEach(team=>{
+
+    const item =
+      document.createElement("div");
+
+    item.className="score-item";
+
+    if(team.finished){
+      item.classList.add("finished");
+    }
+
+
+    if(team.finished){
+
+      item.innerHTML=
+        `<strong>${team.name}</strong><br>
+        ${team.place}.º · ${team.points} puntos`;
+
+    }else{
+
+      item.innerHTML=
+        `<strong>${team.name}</strong><br>
+        En juego`;
+
+    }
+
+
+    box.appendChild(item);
+
+  });
+
+}
+
+
+/* =======================================================
+   ACTUALIZAR INFORMACIÓN DEL TURNO
+======================================================= */
+
+function updateActiveInfo(){
+
+  const team=teams[activeTeam];
+
+  let extra="";
+
+  if(team.finished){
+    extra=" · Ya finalizó";
+  }
+
+  if(team.awaitingValidation){
+    extra=" · Esperando explicación científica";
+  }
+
+
+  document.getElementById("activeInfo")
+    .textContent =
+      "Turno seleccionado: "
+      +team.name
+      +extra;
+
+}
+
+
+/* =======================================================
+   ACTIVAR / DESACTIVAR LETRAS YA USADAS
+======================================================= */
+
+function updateKeyboard(){
+
+  const team=teams[activeTeam];
+
+  const keys =
+    document.querySelectorAll(".key");
+
+  keys.forEach(button=>{
+
+    button.disabled =
+      team.used.has(button.textContent)
+      ||
+      team.finished
+      ||
+      team.awaitingValidation;
+
+  });
+
+}
+
+
+/* =======================================================
+   RENDER GENERAL
+======================================================= */
+
+function renderAll(){
+
+  renderTeams();
+  renderScoreboard();
+  updateActiveInfo();
+  updateKeyboard();
+
+}
+
+
+/* =======================================================
+   RESULTADO FINAL
+======================================================= */
+
+function showFinalResults(){
+
+  const box =
+    document.getElementById("finalBox");
+
+  const ranking =
+    [...teams].sort(
+      (a,b)=>a.place-b.place
+    );
+
+
+  let rows="";
+
+  ranking.forEach(team=>{
+
+    rows += `
+      <tr>
+        <td>${team.place}.º</td>
+        <td>${team.name}</td>
+        <td>${escapeHTML(team.phrase)}</td>
+        <td>${team.points}</td>
+      </tr>
+    `;
+
+  });
+
+
+  box.innerHTML=`
+
+    <h2>🏆 Clasificación final</h2>
+
+    <table class="final-table">
+
+      <thead>
+        <tr>
+          <th>Puesto</th>
+          <th>Equipo</th>
+          <th>Estrategia</th>
+          <th>Puntos</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        ${rows}
+      </tbody>
+
+    </table>
+
+  `;
+
+
+  box.classList.remove("hidden");
+
+  box.scrollIntoView({
+    behavior:"smooth"
+  });
+
+}
+
+
+/* =======================================================
+   REINICIAR MISMA PARTIDA
+======================================================= */
+
+function restartGame(){
+
+  const ok =
+    confirm(
+      "¿Reiniciar esta partida con las mismas frases?"
+    );
+
+  if(!ok) return;
+
+
+  teams.forEach(team=>{
+
+    team.used=new Set();
+    team.errors=0;
+    team.hintVisible=false;
+    team.awaitingValidation=false;
+    team.finished=false;
+    team.place=null;
+    team.points=0;
+
+  });
+
+
+  finishCounter=0;
+  activeTeam=0;
+
+
+  document
+    .getElementById("finalBox")
+    .classList.add("hidden");
+
+
+  renderAll();
+
+}
+
+
+/* =======================================================
+   VOLVER A CONFIGURACIÓN
+======================================================= */
+
+function returnToSetup(){
+
+  const ok =
+    confirm(
+      "¿Volver a la pantalla de configuración?"
+    );
+
+  if(!ok) return;
+
+
+  document
+    .getElementById("gameScreen")
+    .classList.add("hidden");
+
+  document
+    .getElementById("setupScreen")
+    .classList.remove("hidden");
+
+}
+
+
+/* =======================================================
+   PANTALLA COMPLETA
+======================================================= */
+
+function toggleFullscreen(){
+
+  if(!document.fullscreenElement){
+
+    document.documentElement
+      .requestFullscreen()
+      .catch(()=>{});
+
+  }else{
+
+    document.exitFullscreen();
+
+  }
+
+}
+
+
+/* =======================================================
+   SEGURIDAD BÁSICA PARA TEXTO INGRESADO
+======================================================= */
+
+function escapeHTML(text){
+
+  const div=document.createElement("div");
+  div.textContent=text;
+  return div.innerHTML;
+
+}
+
+
+/* =======================================================
+   ARRANQUE
+======================================================= */
+
+createSetupRows();
+loadConfiguration();
+
+</script>
+
+</body>
+</html>
