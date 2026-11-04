@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Ahorcadito científico - Biología 6°</title>
+<title>Ahorcadito científico - Ciencias Naturales</title>
 
 <style>
 
@@ -451,8 +451,8 @@ footer{
 <body>
 
 <header>
-  <h1>🧬 Ahorcadito científico · Biología 6°</h1>
-  <p>Estrategias de defensa y supervivencia de los seres vivos</p>
+  <h1>🔬 Ahorcadito científico · Ciencias Naturales</h1>
+  <p>Juego interactivo para Biología, Química y Física</p>
 </header>
 
 
@@ -566,7 +566,7 @@ footer{
 
 
 <footer>
-  Recurso educativo · Biología 6° · La explicación científica es requisito para validar la respuesta.
+  Recurso educativo · Ciencias Naturales · La explicación científica es requisito para validar la respuesta.
 </footer>
 
 
@@ -667,7 +667,7 @@ function saveConfiguration(){
   }
 
   localStorage.setItem(
-    "ahorcadito_biologia6",
+    "ahorcadito_clases_cn",
     JSON.stringify(data)
   );
 
@@ -683,7 +683,7 @@ function saveConfiguration(){
 function loadConfiguration(){
 
   const saved =
-    localStorage.getItem("ahorcadito_biologia6");
+    localStorage.getItem("ahorcadito_clases_cn");
 
   if(!saved){
     alert("No hay una configuración guardada en este navegador.");
@@ -721,7 +721,7 @@ function clearConfiguration(){
 
   if(!ok) return;
 
-  localStorage.removeItem("ahorcadito_biologia6");
+  localStorage.removeItem("ahorcadito_clases_cn");
 
   for(let i=0;i<TOTAL_TEAMS;i++){
     document.getElementById("phrase_"+i).value="";
